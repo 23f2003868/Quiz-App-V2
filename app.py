@@ -2,6 +2,7 @@ from flask import Flask
 from backend.config import Local
 from backend.models import db, User, Role
 from flask_security import Security, SQLAlchemyUserDatastore, auth_required
+from backend.resource import api
 
 
 def Quiz():
@@ -10,6 +11,7 @@ def Quiz():
     app.config.from_object(Local)
     
     db.init_app(app)
+    api.init_app(app)
     
     datastore = SQLAlchemyUserDatastore(db, User, Role)
     app.security = Security(app, datastore=datastore, register_blueprint = False)
