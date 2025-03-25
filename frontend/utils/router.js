@@ -7,6 +7,7 @@ import EditSubject from "../pages/EditSubject.js"
 import AddChapter from "../pages/AddChapter.js"
 import EditChapter from "../pages/EditChapter.js"
 import Chapter from "../pages/Chapter.js"
+import QuizList from "../pages/QuizList.js"
 
 
 
@@ -21,6 +22,9 @@ const routes = [
     {path : '/admin_dashboard/addChapter/:id', component : AddChapter},
     {path : '/admin_dashboard/editChapter/:id', component : EditChapter},
     {path : '/admin_dashboard/chapters/:chapter_id', component : Chapter},
+    {path : '/quiz', component : QuizList},
+    {path : '/user_dashboard', component : QuizList},
+    {path : '/user_dashboard/quiz/:quizID', component : QuizList}
 ]
 
 const router = new VueRouter({

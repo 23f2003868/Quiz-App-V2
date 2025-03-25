@@ -39,6 +39,13 @@ questions = {
     'quiz_id' : fields.Integer
 }
 
+scores = {
+    'id' : fields.Integer,
+    'quiz_id' : fields.Integer,
+    'user_id' : fields.Integer,
+    'total_scored' : fields.Integer
+}
+
 
 class Subjects(Resource):
     @marshal_with(subjects)
@@ -283,7 +290,42 @@ class Questions(Resource):
             return {'message' : 'Not Found'}, 400
         db.session.delete(question)
         db.session.commit()
+
+
+
+class SubmitQuiz(Resource):
+    @marshal_with(scores)
+    @auth_required('token')
+    def post(self):
+        data = request.get_json()
+        print(data)
+        quiz_id = data.get('quiz_id')
+        user_id = data.get('user_id')
+        total_scored = data.get('score')
+        
+        
+        newScore = Score(quiz_id = quiz_id, user_id = user_id, total_scored = total_scored)
+        db.session.add(newScore)
+        db.session.commit()
+        print("Store data:", newScore.quiz_id, newScore.user_id, newScore.total_scored)
+        return newScore
     
+    
+    @auth_required('token')
+    def get(self,user_id):
+        scores = Score.query.filter_by(user_id=user_id).all()
+        if not scores:
+            return{'message':'No scores found'}
+        
+        user_statistics = []
+        for score in scores:
+            quiz = Quiz.query.get(score.quiz_id)
+            user_statistics.append({
+                'quiz_id' : score.quiz_id,
+                'quiz_title' : quiz.title,
+                'total_scored' : score.total_scored
+            })
+        return user_statistics
 
 
 
@@ -294,3 +336,4 @@ api.add_resource(Chapters, '/chapters/<int:id>')
 api.add_resource(Quizzes, '/chapters/<int:chapter_id>/quizzes')
 api.add_resource(QuizzesList, '/quizzes/<int:id>', '/quizzes')
 api.add_resource(Questions, '/quizzes/<int:id>/questions', '/questions/<int:id>')
+api.add_resource(SubmitQuiz, '/submit_quiz', '/user/<int:user_id>/score')
