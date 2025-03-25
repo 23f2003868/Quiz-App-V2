@@ -10,13 +10,13 @@ export default {
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100 d-flex justify-content-evenly">
                 <li class="nav-item">
                 <router-link v-if="role==='admin'"  to="/quiz" class="nav-link fw-medium">Quiz</router-link>
-                <router-link v-else to="/score" class="nav-link fw-medium">Score</router-link>
+                <router-link v-else to="/score" class="nav-link fw-medium"><i class="fa-brands fa-screenpal fa-beat"></i> Score</router-link>
                 </li>
                 <li class="nav-item">
-                <router-link to="/summary" class="nav-link fw-medium">Summary</router-link>
+                <router-link to="/summary" class="nav-link fw-medium"><i class="fa-solid fa-chart-simple fa-beat"></i> Summary</router-link>
                 </li>
                 <li class="nav-item">
-                <button class="btn btn-danger ms-auto" @click="logout">Logout</button>
+                <button class="btn btn-danger ms-auto" @click="logout"><i class="fa-solid fa-right-from-bracket fa-beat"></i> Logout</button>
                 </li>
                 
             </ul>

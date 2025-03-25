@@ -7,9 +7,9 @@ export default {
                 <div class="card shadow p-3 mb-4">
                     <h3 class="text-center"><span class="badge rounded-pill text-bg-info">{{subject.name}}</span></h3>
                     <div class="btn-group mt-3 d-flex justify-content-center">
-                        <button class="btn btn-sm btn-warning me-2 rounded" @click="EditSubjectModal(subject.id)">Edit Subject</button>
-                        <button class="btn btn-sm btn-danger me-2 rounded" @click="DeleteSubjectModal(subject.id)">Delete Subject</button>
-                        <button class="btn btn-sm btn-primary rounded" @click="AddChapterModal(subject.id)">Add Chapter</button>
+                        <button class="btn btn-sm btn-warning me-2 rounded" @click="EditSubjectModal(subject.id)"><i class="fa-solid fa-pen fa-beat me-2"></i> Edit Subject</button>
+                        <button class="btn btn-sm btn-danger me-2 rounded" @click="DeleteSubjectModal(subject.id)"><i class="fa-solid fa-trash fa-beat me-2"></i> Delete Subject</button>
+                        <button class="btn btn-sm btn-primary rounded" @click="AddChapterModal(subject.id)"><i class="fa-solid fa-plus fa-beat me-2"></i> Add Chapter</button>
                     </div>
 
                     <table v-if="subject.chapters.length > 0" class="table table-bordered mt-3">
@@ -24,16 +24,16 @@ export default {
                             <tr v-for="(chapter, index) in subject.chapters" :key="chapter.id">
                                 <td>{{index+1}}</td>
                                 <td><button class="btn btn-link p-0 text-primary fw-bold" @click="chapterDetails(chapter.id)">{{chapter.name}}</button></td>
-                                <td><button class="btn btn-warning btn-sm rounded" @click="editChapter(chapter.id)" >Edit</button> | <button class="btn btn-danger btn-sm rounded" @click="DeleteChapter(chapter.id)">Delete</button></td>
+                                <td><button class="btn btn-warning btn-sm rounded" @click="editChapter(chapter.id)" ><i class="fa-solid fa-pen fa-beat me-2"></i> Edit</button> | <button class="btn btn-danger btn-sm rounded" @click="DeleteChapter(chapter.id)"><i class="fa-solid fa-trash fa-beat me-2"></i> Delete</button></td>
                             </tr>
                         </tbody>
                     </table>
-                    <p class="text-muted" v-else>No chapters available</p>
+                    <p class="text-muted mt-3" v-else>No chapters available</p>
                 </div>
             </div>
         </div>
         <div class="text-center mt-5">
-            <button class="btn btn-success mb-5" @click="AddSubjectModal">+ Add Subjects</button>
+            <button class="btn btn-success mb-5" @click="AddSubjectModal"><i class="fa-solid fa-plus fa-beat me-2"></i> Add Subjects</button>
         </div>
     </div>
     `,

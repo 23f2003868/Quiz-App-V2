@@ -5,8 +5,10 @@ export default {
                 <div class="hero-text w-100 w-md-50">
                     <h1 class="display-5 fw-bold">Welcome to Quiz Master</h1>
                     <p class="fs-5">Test your knowledge with quizzes on different Subject and their respective topics..</p>
-                    <router-link to="/register" class="btn btn-primary btn-lg animate-btn">Get Started</router-link>
-                    <router-link to="/login" class="btn btn-outline-light btn-lg ms-3 animate-btn">Login</router-link>
+                    <div class="d-flex justify-content-center">
+                        <router-link to="/register" class="btn btn-primary btn-lg animate-btn"><i class="fa-solid fa-address-card fa-beat me-2"></i> Get Started</router-link>
+                        <router-link to="/login" class="btn btn-outline-light btn-lg ms-3 animate-btn"><i class="fa-solid fa-right-to-bracket fa-beat me-2"></i> Login</router-link>
+                    </div>
                 </div>
                 <div class="hero-img w-100 w-md-50">
                     <div class="quiz-img"></div>
@@ -17,21 +19,21 @@ export default {
                 <div class="row text-center">
                     <div class="col-md-4 mb-4">  
                         <div class="card p-4 shadow-lg feature-card" style="min-height:15rem;">
-                            <i class="fa-solid fa-book-open-reader text-primary fs-1"></i>
+                            <i class="fa-solid fa-book-open-reader text-primary fs-1 fa-beat"></i>
                             <h3 class="mt-3">Different variety of Quizzes</h3>
                             <p>Explore quizzes in differents subjects such as Science, Mathematics, Social Science, and many more...</p>
                         </div>
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card p-4 shadow-lg feature-card" style="min-height:15rem;">
-                            <i class="fa-solid fa-bars-progress text-primary fs-1"></i>
+                            <i class="fa-solid fa-bars-progress text-primary fs-1 fa-beat"></i>
                             <h3 class="mt-3">Know Your Progress</h3>
                             <p>See your performance with detailed stats and improve over time...</p>
                         </div>
                     </div>
                     <div class="col-md-4 mb-4">
                         <div class="card p-4 shadow-lg feature-card" style="min-height:15rem;">
-                            <i class="fa-solid fa-medal text-primary fs-1"></i>
+                            <i class="fa-solid fa-medal text-primary fs-1 fa-beat"></i>
                             <h3 class="mt-3">Compete and Win</h3>
                             <p>Challenge your friends and go up in leaderboard to become winner...</p>
                         </div>
@@ -42,7 +44,7 @@ export default {
             <section class="start text-white text-center py-5">
                 <div class="container">
                     <h2>Start your journey with Quiz Master today!</h2>
-                    <router-link to="/register" class="btn btn-light btn-lg mt-3 animate-btn">Sign Up Now</router-link>
+                    <router-link to="/register" class="btn btn-light btn-lg mt-3 animate-btn"><i class="fa-solid fa-address-card fa-beat me-2"></i> Sign Up Now</router-link>
                 </div>
             </section>
 
