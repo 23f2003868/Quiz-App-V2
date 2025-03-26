@@ -8,6 +8,8 @@ import AddChapter from "../pages/AddChapter.js"
 import EditChapter from "../pages/EditChapter.js"
 import Chapter from "../pages/Chapter.js"
 import QuizList from "../pages/QuizList.js"
+import Score from "../pages/Score.js"
+import Summary from "../pages/Summary.js"
 
 
 
@@ -24,7 +26,9 @@ const routes = [
     {path : '/admin_dashboard/chapters/:chapter_id', component : Chapter},
     {path : '/quiz', component : QuizList},
     {path : '/user_dashboard', component : QuizList},
-    {path : '/user_dashboard/quiz/:quizID', component : QuizList}
+    {path : '/user_dashboard/quiz/:quizID', component : QuizList},
+    {path : '/score', component : Score},
+    {path : '/summary', component : Summary}
 ]
 
 const router = new VueRouter({

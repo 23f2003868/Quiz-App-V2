@@ -292,7 +292,6 @@ class Questions(Resource):
         db.session.commit()
 
 
-
 class SubmitQuiz(Resource):
     @marshal_with(scores)
     @auth_required('token')
@@ -328,6 +327,59 @@ class SubmitQuiz(Resource):
         return user_statistics
 
 
+class QuizSummary(Resource):
+    @auth_required('token')
+    def get(self):
+        role = request.headers.get('Role')
+        user_id = request.headers.get('UserId')
+        
+        if not role or not user_id:
+            return{'message':'Missing role and userId'},400
+        
+        if role == 'user':
+            scores = Score.query.filter_by(user_id=user_id).all()
+            if not scores:
+                return{'message':'No scores found'},400
+            
+            user_stats = [
+                {
+                    'quiz_id':score.quiz_id,
+                    'quiz_title': Quiz.query.get(score.quiz_id).title,
+                    'total_scored':score.total_scored
+                } for score in scores
+            ]
+            
+            return jsonify({
+                'userStats':user_stats
+            })
+            
+        elif role == 'admin':
+            quizzes = Quiz.query.all()
+            
+            quiz_attempts = [
+                {
+                    'quiz_id':quiz.id,
+                    'quiz_title':quiz.title,
+                    'attempts':Score.query.filter_by(quiz_id=quiz.id).count()
+                } for quiz in quizzes
+            ]
+            
+            top_scores = Score.query.order_by(Score.total_scored.desc()).limit(5).all()
+            top_scores_list = [
+                {
+                    'quiz_id':score.quiz_id,
+                    'quiz_title':Quiz.query.get(score.quiz_id).title,
+                    'user_id':score.user_id,
+                    'user_name':User.query.get(score.user_id).fullname,
+                    'total_scored':score.total_scored
+                    
+                } for score in top_scores
+            ]
+            return jsonify({'quizAttempts':quiz_attempts, 'topScores':top_scores_list})
+
+
+
+
 
 api.add_resource(SubjectsList, '/subjects')
 api.add_resource(Subjects, '/subjects/<int:id>')
@@ -337,3 +389,4 @@ api.add_resource(Quizzes, '/chapters/<int:chapter_id>/quizzes')
 api.add_resource(QuizzesList, '/quizzes/<int:id>', '/quizzes')
 api.add_resource(Questions, '/quizzes/<int:id>/questions', '/questions/<int:id>')
 api.add_resource(SubmitQuiz, '/submit_quiz', '/user/<int:user_id>/score')
+api.add_resource(QuizSummary, '/quiz_summary')
