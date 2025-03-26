@@ -18,7 +18,7 @@ export default {
                         <td class="text-center">{{quiz.title}}</td>
                         <td class="text-center">{{quiz.date_of_quiz}}</td>
                         <td class="text-center">{{quiz.time_duration}}</td>
-                        <td class="text-center" v-if="role==='user'"><button class="btn btn-success" @click="startQuiz(quiz)">Start</button></td>
+                        <td class="text-center" v-if="role==='user'"><button class="btn btn-success" @click="startQuiz(quiz)" :disabled="!quiz.isToday">Start</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -62,6 +62,21 @@ export default {
         }
     },
 
+    watch : {
+        userAnswers : {
+            deep : true,
+            handler(){
+                if(this.currentQuiz){
+                    localStorage.setItem("activeQuiz", JSON.stringify({
+                        quiz : this.currentQuiz,
+                        endTime : this.activeQuizzes[this.currentQuiz.id],
+                        userAnswers : this.userAnswers
+                    }))
+                }
+            }
+        }
+    },
+
     methods : {
         async fetchQuizzes(){
             const response = await fetch(location.origin+`/api/quizzes`,{
@@ -73,7 +88,11 @@ export default {
             if(response.ok){
                 const data = await response.json()
                 if(Array.isArray(data)){
-                    this.quizzes = data
+                    const today = new Date().toISOString().split('T')[0];
+                    this.quizzes = data.map(quiz=>({
+                        ...quiz,
+                        isToday : quiz.date_of_quiz === today
+                    }))
                 }
             }
         },
@@ -82,7 +101,14 @@ export default {
             if(this.activeQuizzes[quiz.id]) return;
 
             this.currentQuiz = quiz;
-            this.activeQuizzes[quiz.id] = Date.now() + quiz.time_duration*60*1000
+            const endTime = Date.now()+quiz.time_duration*60*1000;
+            this.activeQuizzes[quiz.id] = endTime
+
+            localStorage.setItem("activeQuiz", JSON.stringify({
+                quiz : quiz,
+                endTime : endTime,
+                userAnswers : this.userAnswers
+            }))
 
             const response = await fetch(location.origin +`/api/questions/${quiz.id}`,{
                 headers : {
@@ -100,20 +126,20 @@ export default {
                 })
             }
 
-            console.log(this.correctAnswers)
 
             this.timers[quiz.id] = setInterval(()=>{
                 const timeLeft = this.getTimeLeft(quiz.id);
+                this.$forceUpdate();
                 if(timeLeft === "00:00"){
                     clearInterval(this.timers[quiz.id])
                     this.submitQuiz()
                 }
             },1000)
         },
-
+        
         getTimeLeft(quizId){
             if(!this.activeQuizzes[quizId]) return "--:--"
-
+            
             const timeRemaining = Math.max(0, this.activeQuizzes[quizId]- Date.now());
             const minutes = String(Math.floor(timeRemaining/60000)).padStart(2,"0")
             const seconds = String(Math.floor((timeRemaining%60000)/1000)).padStart(2,"0")
@@ -157,6 +183,7 @@ export default {
             }else{
                 alert(`Failed to submit quiz.`)
             }
+            localStorage.removeItem("activeQuiz")
             this.currentQuiz = null
             this.userAnswers={}
             this.questions=[]
@@ -166,5 +193,44 @@ export default {
 
     mounted(){
         this.fetchQuizzes()
+
+        const storeQuiz = JSON.parse(localStorage.getItem("activeQuiz"));
+        if(storeQuiz){
+            const timeRemaining = storeQuiz.endTime-Date.now();
+            if(timeRemaining>0){
+                this.currentQuiz = storeQuiz.quiz;
+                this.activeQuizzes[this.currentQuiz.id] = storeQuiz.endTime;
+                this.userAnswers = storeQuiz.userAnswers || {}
+
+                fetch(location.origin +`/api/questions/${this.currentQuiz.id}`,{
+                    headers : {
+                        "Authentication-Token" : this.$store.state.auth_token
+                    }
+                })
+        
+                .then(response=>response.json())
+                .then(data=>{
+
+                    this.questions = data;
+        
+                    this.correctAnswers = {}
+                    data.forEach(q=>{
+                        this.correctAnswers[q.id] = q.correct_option
+                    })
+                })
+        
+        
+                this.timers[this.currentQuiz.id] = setInterval(()=>{
+                    const timeLeft = this.getTimeLeft(this.currentQuiz.id);
+                    this.$forceUpdate();
+                    if(timeLeft === "00:00"){
+                        clearInterval(this.timers[quiz.id])
+                        this.submitQuiz()
+                    }
+                },1000)
+            }else{
+                localStorage.removeItem('activeQuiz')
+            }
+        }
     }
 }

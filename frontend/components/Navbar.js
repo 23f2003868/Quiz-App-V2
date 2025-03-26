@@ -33,6 +33,7 @@ export default {
     methods : {
         logout(){
             this.$store.commit('logout')
+            localStorage.removeItem('activeQuiz')
             this.$router.push('/')
         }
     }
