@@ -24,8 +24,10 @@ export default {
             </table>
             
             <div class="mt-4" v-if="currentQuiz">
-                <h5 class="text-center">{{currentQuiz.title}}</h5>
-                <h5 class="text-center">Time Left: {{getTimeLeft(currentQuiz.id)}}</h5>
+                <div class="d-flex justify-content-evenly mb-5">
+                    <h3 class="text-center">{{currentQuiz.title}}</h3>
+                    <span class="text-center border border-dark bg-dark text-success px-2 rounded fs-3 fw-bold shadow">{{getTimeLeft(currentQuiz.id)}}</span>
+                </div>
                 <div v-for="(question, index) in questions" :key="question.id" class="card mt-3">
                     <div class="card-body">
                         <h5 class="card-title">{{index+1}}. {{question.question_statement}}</h5>
@@ -131,7 +133,7 @@ export default {
                 const timeLeft = this.getTimeLeft(quiz.id);
                 this.$forceUpdate();
                 if(timeLeft === "00:00"){
-                    clearInterval(this.timers[quiz.id])
+                    clearInterval(this.timers[this.currentQuiz.id])
                     this.submitQuiz()
                 }
             },1000)
@@ -143,11 +145,17 @@ export default {
             const timeRemaining = Math.max(0, this.activeQuizzes[quizId]- Date.now());
             const minutes = String(Math.floor(timeRemaining/60000)).padStart(2,"0")
             const seconds = String(Math.floor((timeRemaining%60000)/1000)).padStart(2,"0")
-
+            if(timeRemaining <=0){
+                clearInterval(this.timers[this.currentQuiz.id])
+                return "00:00"
+            }
             return `${minutes}:${seconds}`
         },
 
         async submitQuiz() {
+            if(!this.$store.state.auth_token){
+                return
+            }
             clearInterval(this.timers[this.currentQuiz.id])
 
             let totalScore = 0;
@@ -224,7 +232,7 @@ export default {
                     const timeLeft = this.getTimeLeft(this.currentQuiz.id);
                     this.$forceUpdate();
                     if(timeLeft === "00:00"){
-                        clearInterval(this.timers[quiz.id])
+                        clearInterval(this.timers[this.currentQuiz.id])
                         this.submitQuiz()
                     }
                 },1000)
