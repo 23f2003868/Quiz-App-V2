@@ -1,7 +1,9 @@
-from flask import current_app as app, jsonify, render_template, request
+from flask import current_app as app, jsonify, render_template, request, send_file
 from flask_security import auth_required, verify_password, hash_password
 from backend.models import UserRoles, db
 from datetime import datetime
+from backend.celery.task import create_csv_quizzes, create_csv_user
+from celery.result import AsyncResult
 
 datastore = app.security.datastore
 
@@ -62,4 +64,38 @@ def register():
         db.session.rollback()
         print(str(e))
         return jsonify({'message':'Error creating user'}), 500
+    
+    
+
+@app.get('/create-quiz-csv')
+def createcsv():
+    task = create_csv_quizzes.delay()
+    return {'task_id':task.id},200
+
+
+
+@app.get('/get-quiz-csv/<id>')
+def getCSVQuizzes(id):
+    result = AsyncResult(id)
+    
+    if result.ready():
+        return send_file(f'./backend/celery/user-downloads/{result.result}')
+    else:
+        return {'message':'task not ready'},405
+    
+    
+    
+@app.get('/user-csv')
+def userCSV():
+    task = create_csv_user.delay()
+    return {'task_id':task.id},200
+
+
+@app.get('/get-user-csv/<id>')
+def getUserCSV(id):
+    result = AsyncResult(id)
+    if result.ready():
+        return send_file(f'./backend/celery/user-downloads/{result.result}')
+    else:
+        return {'message':'task not ready'},405
         

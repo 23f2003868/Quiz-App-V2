@@ -1,4 +1,5 @@
 from celery import shared_task
+import flask_excel
 from backend.models import Quiz, User, Score, db
 from backend.celery.email_sender import email_send
 
@@ -52,3 +53,31 @@ def send_monthly_performance():
         """
         
         email_send(user.email, subject, content)
+        
+        
+
+@shared_task(bind = True, ignore_result = False)
+def create_csv_quizzes(self):
+    resource = Quiz.query.all()
+    task_id = self.request.id
+    filename = f'quiz_data_{task_id}.csv'
+    column_names=[column.name for column in Quiz.__table__.columns]
+    csv_out = flask_excel.make_response_from_query_sets(resource, column_names=column_names, file_type='csv')
+    
+    with open(f'./backend/celery/user-downloads/{filename}','wb') as file:
+        file.write(csv_out.data)
+    return filename
+
+
+@shared_task(bind = True, ignore_result = False)
+def create_csv_user(self):
+    resource = User.query.all()
+    resource = resource[1:]
+    task_id = self.request.id
+    filename = f'user_data_{task_id}.csv'
+    column_names=[column.name for column in User.__table__.columns]
+    csv_out = flask_excel.make_response_from_query_sets(resource, column_names=column_names, file_type='csv')
+    
+    with open(f'./backend/celery/user-downloads/{filename}','wb') as file:
+        file.write(csv_out.data)
+    return filename

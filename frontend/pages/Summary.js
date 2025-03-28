@@ -9,7 +9,10 @@ export default{
             </div>
             
             <div v-else-if="role==='admin'">
-                <h4 class="text-center">Quiz-wise Attempts</h4>
+                <div class="d-flex justify-content-evenly">
+                    <h4 class="text-center">Quiz-wise Attempts</h4>
+                    <button class="btn btn-success mb-3" @click="create_csv_user">Get User Details</button>
+                </div>
                 <div class="d-flex justify-content-center">
                     <div class="w-75" style="height:500px">
                         <canvas id="quizAttemptsChart"></canvas>
@@ -162,6 +165,19 @@ export default{
                     maintainAspectRatio:false
                 }
             })
+        },
+
+        async create_csv_user(){
+            const response = await fetch(location.origin+`/user-csv`)
+            const id = (await response.json()).task_id
+
+            const wait = setInterval(async()=>{
+                const result = await fetch(location.origin+`/get-user-csv/${id}`)
+                if(result.ok){
+                    window.open(location.origin+`/get-user-csv/${id}`)
+                    clearInterval(wait)
+                }
+            },100)
         }
     }
 }

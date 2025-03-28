@@ -1,7 +1,10 @@
 export default {
     template : `
         <div class="container mt-5">
+        <div class="d-flex justify-content-evenly">
             <h2 class="mb-3 text-center"><span class="badge rounded-pill text-bg-info">Quizzes</span></h2>
+            <button class="btn btn-success mb-3" @click="create_csv">Get Quizzes Data</button>
+        </div>
             <table class="table table-bordered table-striped" v-if="quizzes.length>0 && !currentQuiz ">
                 <thead class="table-primary">
                     <tr>
@@ -196,6 +199,19 @@ export default {
             this.userAnswers={}
             this.questions=[]
             this.correctAnswers={}
+        },
+
+        async create_csv(){
+            const response = await fetch(location.origin+`/create-quiz-csv`)
+            const id = (await response.json()).task_id
+
+            const wait = setInterval(async()=>{
+                const result = await fetch(location.origin+`/get-quiz-csv/${id}`)
+                if(result.ok){
+                    window.open(location.origin+`/get-quiz-csv/${id}`)
+                    clearInterval(wait)
+                }
+            },100)
         }
     },
 
