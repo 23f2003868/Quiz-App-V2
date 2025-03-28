@@ -5,7 +5,7 @@ export default {
             <h2 class="mb-3 text-center"><span class="badge rounded-pill text-bg-info">Quizzes</span></h2>
             <button class="btn btn-success mb-3" @click="create_csv">Get Quizzes Data</button>
         </div>
-            <table class="table table-bordered table-striped" v-if="quizzes.length>0 && !currentQuiz ">
+            <table class="table table-bordered table-striped table-hover" v-if="quizzes.length>0 && !currentQuiz ">
                 <thead class="table-primary">
                     <tr>
                         <th class="text-center">S.No</th>

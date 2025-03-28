@@ -12,7 +12,7 @@ export default {
                         <button class="btn btn-sm btn-primary rounded" @click="AddChapterModal(subject.id)"><i class="fa-solid fa-plus fa-beat me-2"></i> Add Chapter</button>
                     </div>
 
-                    <table v-if="subject.chapters.length > 0" class="table table-bordered mt-3">
+                    <table v-if="subject.chapters.length > 0" class="table table-bordered mt-3 table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>S.No.</th>

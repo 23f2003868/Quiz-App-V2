@@ -2,7 +2,7 @@ export default {
     template : `
         <div class="container mt-3">
             <h2 class="mb-3 text-center"><span class="badge rounded-pill text-bg-info">Quiz Scores</span></h2>
-            <table class="table table-striped">
+            <table class="table table-striped table-hover">
                 <thead class="table-primary">
                     <tr>
                         <th class="text-center">S.No.</th>
