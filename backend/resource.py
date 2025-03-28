@@ -95,7 +95,7 @@ class SubjectsList(Resource):
         subject = Subject(name = name, description = description)
         db.session.add(subject)
         db.session.commit()
-        return {'message':'Subject added successfully'}, 201
+        return {'message':'Subject added successfully'}, 200
 
 
 class Chapters(Resource):
@@ -104,7 +104,7 @@ class Chapters(Resource):
     def get(self, id):
         chapter = Chapter.query.get(id)
         if not chapter:
-            return {'message' : 'Not Found'}, 400
+            return {'message' : 'Not Found'}, 404
         return chapter
     
     
@@ -118,14 +118,14 @@ class Chapters(Resource):
         chapter.description = data.get('description', chapter.description)
         chapter.subject_id = data.get('subject_id', chapter.subject_id)
         db.session.commit()
-        return {'message' : 'Chapter updated successfully'}
+        return {'message' : 'Chapter updated successfully'}, 200
     
     
     @auth_required('token')
     def delete(self, id):
         chapter = Chapter.query.get(id)
         if not chapter:
-            return {'message' : 'Not Found'}, 400
+            return {'message' : 'Not Found'}, 404
         db.session.delete(chapter)
         db.session.commit()
     
@@ -146,7 +146,7 @@ class ChaptersList(Resource):
         chapter = Chapter(name = name, description = description, subject_id = subject_id)
         db.session.add(chapter)
         db.session.commit()
-        return {'message':'Chapter added successfully'}
+        return {'message':'Chapter added successfully'}, 200
 
 
 class Quizzes(Resource):
@@ -155,7 +155,7 @@ class Quizzes(Resource):
     def get(self, chapter_id):
         quiz = Quiz.query.filter_by(chapter_id=chapter_id).all()
         if not quiz:
-            return {'message' : 'Not Found'}, 400
+            return {'message' : 'Not Found'}, 404
         
         response = [
             {
@@ -179,7 +179,7 @@ class Quizzes(Resource):
         quiz = Quiz(title = title, date_of_quiz = date_of_quiz, time_duration = time_duration, chapter_id = chapter_id)
         db.session.add(quiz)
         db.session.commit()
-        return {'message':'Quiz created successfully'}, 201
+        return {'message':'Quiz created successfully'}, 200
     
     
 class QuizzesList(Resource):
@@ -236,7 +236,7 @@ class QuizzesList(Resource):
             return {'message' : 'Not Found'}, 400
         db.session.delete(quiz)
         db.session.commit()
-        return{'message': 'Quiz Deletes successfully'}
+        return{'message': 'Quiz Deleted successfully'}, 200
     
 
 class Questions(Resource):
@@ -263,7 +263,7 @@ class Questions(Resource):
         question = Question(title = title, question_statement = question_statement, option1 = option1, option2 = option2, option3 = option3, option4 = option4, correct_option = correct_option, quiz_id = id)
         db.session.add(question)
         db.session.commit()
-        return {'message':'Question added successfully'}
+        return {'message':'Question added successfully'}, 200
     
     
     @auth_required('token')
@@ -287,7 +287,7 @@ class Questions(Resource):
     def delete(self, id):
         question = Question.query.get(id)
         if not question:
-            return {'message' : 'Not Found'}, 400
+            return {'message' : 'Not Found'}, 404
         db.session.delete(question)
         db.session.commit()
 
@@ -334,7 +334,7 @@ class QuizSummary(Resource):
         user_id = request.headers.get('UserId')
         
         if not role or not user_id:
-            return{'message':'Missing role and userId'},400
+            return{'message':'Missing role and userId'}, 404
         
         if role == 'user':
             scores = Score.query.filter_by(user_id=user_id).all()
